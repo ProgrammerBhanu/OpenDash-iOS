@@ -4,12 +4,14 @@ import SwiftUI
 struct OpenDashApp: App {
     @StateObject private var store = OpenDashStore()
     @StateObject private var location = LocationProvider()
+    @StateObject private var dashStreamer = BikeDashStreamer()
 
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(store)
                 .environmentObject(location)
+                .environmentObject(dashStreamer)
                 .task {
                     location.request()
                 }
@@ -18,9 +20,8 @@ struct OpenDashApp: App {
                         .queryItems?
                         .first(where: { $0.name == "text" })?
                         .value ?? url.absoluteString
-                    store.importSharedText(sharedText)
                     Task {
-                        await store.planRoute(origin: location.coordinate)
+                        await store.importDestinationAndPlanRoute(sharedText, origin: location.coordinate)
                     }
                 }
         }

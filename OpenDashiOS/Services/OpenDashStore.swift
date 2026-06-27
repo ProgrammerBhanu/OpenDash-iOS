@@ -4,6 +4,7 @@ import CoreLocation
 
 enum RouteLoadState: Equatable {
     case idle
+    case resolving
     case loading
     case loaded
     case failed(String)
@@ -123,6 +124,28 @@ final class OpenDashStore: ObservableObject {
         currentDestination = destination
         routePreview = nil
         routeState = .idle
+    }
+
+    func importDestinationAndPlanRoute(_ text: String, origin: CLLocationCoordinate2D?) async {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            routeState = .failed("Paste a Maps link first")
+            return
+        }
+
+        routePreview = nil
+        routeState = .resolving
+
+        do {
+            let destination = try await DestinationResolver.resolve(trimmed)
+            currentDestination = destination
+            routeState = .idle
+            await planRoute(origin: origin)
+        } catch {
+            currentDestination = nil
+            routePreview = nil
+            routeState = .failed(error.localizedDescription)
+        }
     }
 
     func setDestination(_ destination: SharedDestination) {
@@ -254,7 +277,10 @@ final class OpenDashStore: ObservableObject {
             imageData: imageData,
             fit: fit,
             horizontalBias: 0,
-            verticalBias: 0
+            verticalBias: 0,
+            zoom: 1.0,
+            rotationQuarterTurns: 0,
+            isFlippedHorizontally: false
         )
         wallpapers.insert(wallpaper, at: 0)
         activeWallpaperID = wallpaper.id

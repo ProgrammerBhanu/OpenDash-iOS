@@ -1,6 +1,10 @@
 import SwiftUI
 
 struct RootView: View {
+    @EnvironmentObject private var store: OpenDashStore
+    @EnvironmentObject private var location: LocationProvider
+    @EnvironmentObject private var dashStreamer: BikeDashStreamer
+
     var body: some View {
         TabView {
             HomeView()
@@ -19,5 +23,31 @@ struct RootView: View {
                 .tabItem { Label("Settings", systemImage: "gearshape") }
         }
         .tint(OpenDashTheme.gold)
+        .onAppear {
+            syncNavigationProjection()
+        }
+        .onReceive(location.$location) { _ in
+            syncNavigationProjection()
+        }
+        .onReceive(store.$currentDestination) { _ in
+            syncNavigationProjection()
+        }
+        .onReceive(store.$routePreview) { _ in
+            syncNavigationProjection()
+        }
+        .onReceive(store.$routeState) { _ in
+            syncNavigationProjection()
+        }
+    }
+
+    private func syncNavigationProjection() {
+        let snapshot = DashNavigationSnapshot.make(
+            destination: store.currentDestination,
+            route: store.routePreview,
+            location: location.location,
+            gpsStatusText: location.gpsStatusText,
+            routeState: store.routeState
+        )
+        dashStreamer.updateNavigation(snapshot)
     }
 }

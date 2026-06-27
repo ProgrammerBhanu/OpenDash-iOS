@@ -124,7 +124,23 @@ struct WallpaperItem: Codable, Identifiable, Equatable {
     var fit: WallpaperFit
     var horizontalBias: Double
     var verticalBias: Double
+    var zoom: Double?
+    var rotationQuarterTurns: Int?
+    var isFlippedHorizontally: Bool?
     var createdAt: Date = Date()
+
+    var effectiveZoom: Double {
+        min(max(zoom ?? 1.0, 0.5), 3.0)
+    }
+
+    var effectiveRotationQuarterTurns: Int {
+        let turns = rotationQuarterTurns ?? 0
+        return ((turns % 4) + 4) % 4
+    }
+
+    var effectiveIsFlippedHorizontally: Bool {
+        isFlippedHorizontally ?? false
+    }
 }
 
 struct RideSummary: Codable, Identifiable, Equatable {

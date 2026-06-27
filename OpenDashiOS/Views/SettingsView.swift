@@ -19,7 +19,7 @@ struct SettingsView: View {
                             Text("Dash Wi-Fi credentials")
                                 .font(.headline)
                                 .foregroundStyle(OpenDashTheme.textPrimary)
-                            Text("Stored in the iOS Keychain. The streaming proof-of-concept will use these values when it is added.")
+                            Text("Stored in the iOS Keychain. With a Personal Team build, join the dash hotspot from iPhone Wi-Fi Settings.")
                                 .font(.subheadline)
                                 .foregroundStyle(OpenDashTheme.textSecondary)
                             TextField("Dash SSID", text: $credentials.ssid)
@@ -38,6 +38,9 @@ struct SettingsView: View {
                                     savedMessage = "Credentials removed"
                                 }
                             }
+                            Label("Open iPhone Settings > Wi-Fi, join the bike dash network, then return to OpenDash.", systemImage: "wifi")
+                                .font(.caption)
+                                .foregroundStyle(OpenDashTheme.textSecondary)
                             if let savedMessage {
                                 Text(savedMessage)
                                     .font(.caption)

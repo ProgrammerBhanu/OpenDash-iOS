@@ -4,7 +4,9 @@ import MapKit
 struct NavigationFeatureView: View {
     @EnvironmentObject private var store: OpenDashStore
     @EnvironmentObject private var location: LocationProvider
+    @EnvironmentObject private var dashStreamer: BikeDashStreamer
     @State private var sharedText = ""
+    private let credentialStore = SecureCredentialStore()
 
     var body: some View {
         NavigationStack {
@@ -36,8 +38,9 @@ struct NavigationFeatureView: View {
                                 .textFieldStyle(.roundedBorder)
                                 .lineLimit(2...4)
                             PrimaryButton(title: "Import destination", systemImage: "square.and.arrow.down") {
-                                store.importSharedText(sharedText)
-                                Task { await store.planRoute(origin: location.coordinate) }
+                                Task {
+                                    await store.importDestinationAndPlanRoute(sharedText, origin: location.coordinate)
+                                }
                             }
                         }
                     }
@@ -74,6 +77,51 @@ struct NavigationFeatureView: View {
                                 SecondaryButton(title: "Save", systemImage: "pin") {
                                     store.saveCurrentDestination()
                                 }
+                            }
+                        }
+                    }
+
+                    OpenDashCard {
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                Text("Bike dash")
+                                    .font(.headline)
+                                    .foregroundStyle(OpenDashTheme.textPrimary)
+                                Spacer()
+                                Text("\(dashStreamer.streamKind.title) / \(dashStreamer.stage.title)")
+                                    .font(.caption.weight(.bold))
+                                    .foregroundStyle(streamStageColor)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 6)
+                                    .background(streamStageColor.opacity(0.14))
+                                    .clipShape(Capsule())
+                            }
+
+                            if dashStreamer.stage.isActive {
+                                SecondaryButton(
+                                    title: dashStreamer.streamKind == .navigation ? "Stop navigation" : "Stop current stream",
+                                    systemImage: "stop.fill"
+                                ) {
+                                    dashStreamer.stop()
+                                }
+                            } else {
+                                PrimaryButton(title: "Stream navigation", systemImage: "location.north.line.fill") {
+                                    let credentials = credentialStore.load()
+                                    dashStreamer.startNavigation(ssid: credentials.ssid, snapshot: navigationSnapshot)
+                                }
+                            }
+
+                            Label(
+                                dashStreamer.detail,
+                                systemImage: dashStreamer.streamKind == .navigation ? "antenna.radiowaves.left.and.right" : "wifi"
+                            )
+                            .font(.caption)
+                            .foregroundStyle(OpenDashTheme.textSecondary)
+
+                            if dashStreamer.frameCount > 0 {
+                                Text("Frames sent: \(dashStreamer.frameCount)")
+                                    .font(.caption)
+                                    .foregroundStyle(OpenDashTheme.textMuted)
                             }
                         }
                     }
@@ -135,6 +183,16 @@ struct NavigationFeatureView: View {
         }
     }
 
+    private var navigationSnapshot: DashNavigationSnapshot? {
+        DashNavigationSnapshot.make(
+            destination: store.currentDestination,
+            route: store.routePreview,
+            location: location.location,
+            gpsStatusText: location.gpsStatusText,
+            routeState: store.routeState
+        )
+    }
+
     private var destinationSubtitle: String {
         guard let destination = store.currentDestination else {
             return "Import a Maps URL to begin"
@@ -145,9 +203,23 @@ struct NavigationFeatureView: View {
     private var routeStatus: String {
         switch store.routeState {
         case .idle: return "Ready to plan"
+        case .resolving: return "Resolving destination..."
         case .loading: return "Finding route with OSRM..."
         case .loaded: return "Route ready"
         case .failed(let message): return message
+        }
+    }
+
+    private var streamStageColor: Color {
+        switch dashStreamer.stage {
+        case .streaming:
+            return dashStreamer.streamKind == .navigation ? OpenDashTheme.green : OpenDashTheme.gold
+        case .error:
+            return OpenDashTheme.red
+        case .connecting, .authenticating, .ready:
+            return OpenDashTheme.gold
+        case .idle:
+            return OpenDashTheme.textSecondary
         }
     }
 
@@ -155,6 +227,7 @@ struct NavigationFeatureView: View {
         switch store.routeState {
         case .failed: return OpenDashTheme.red
         case .loaded: return OpenDashTheme.green
+        case .resolving: return OpenDashTheme.gold
         default: return OpenDashTheme.textSecondary
         }
     }
