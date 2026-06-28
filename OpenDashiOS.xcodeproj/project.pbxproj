@@ -16,6 +16,7 @@
 		100000000000000000000007 /* SecureCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000007 /* SecureCredentialStore.swift */; };
 		100000000000000000000013 /* DashWiFiConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000016 /* DashWiFiConnector.swift */; };
 		100000000000000000000014 /* DashStreaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000018 /* DashStreaming.swift */; };
+		100000000000000000000015 /* RideKeepAliveService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000019 /* RideKeepAliveService.swift */; };
 		100000000000000000000008 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000008 /* Components.swift */; };
 		100000000000000000000009 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000009 /* RootView.swift */; };
 		10000000000000000000000A /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20000000000000000000000A /* HomeView.swift */; };
@@ -63,6 +64,7 @@
 		200000000000000000000007 /* SecureCredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureCredentialStore.swift; sourceTree = "<group>"; };
 		200000000000000000000016 /* DashWiFiConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashWiFiConnector.swift; sourceTree = "<group>"; };
 		200000000000000000000018 /* DashStreaming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashStreaming.swift; sourceTree = "<group>"; };
+		200000000000000000000019 /* RideKeepAliveService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideKeepAliveService.swift; sourceTree = "<group>"; };
 		200000000000000000000008 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		200000000000000000000009 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		20000000000000000000000A /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 				200000000000000000000007 /* SecureCredentialStore.swift */,
 				200000000000000000000016 /* DashWiFiConnector.swift */,
 				200000000000000000000018 /* DashStreaming.swift */,
+				200000000000000000000019 /* RideKeepAliveService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -289,6 +292,7 @@
 				100000000000000000000007 /* SecureCredentialStore.swift in Sources */,
 				100000000000000000000013 /* DashWiFiConnector.swift in Sources */,
 				100000000000000000000014 /* DashStreaming.swift in Sources */,
+				100000000000000000000015 /* RideKeepAliveService.swift in Sources */,
 				100000000000000000000008 /* Components.swift in Sources */,
 				100000000000000000000009 /* RootView.swift in Sources */,
 				10000000000000000000000A /* HomeView.swift in Sources */,

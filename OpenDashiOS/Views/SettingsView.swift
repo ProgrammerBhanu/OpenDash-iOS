@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @EnvironmentObject private var location: LocationProvider
+    @EnvironmentObject private var keepAlive: RideKeepAliveService
     @State private var credentials = DashCredentials.empty
     @State private var savedMessage: String?
     private let credentialStore = SecureCredentialStore()
@@ -58,7 +60,9 @@ struct SettingsView: View {
                             CapabilityRow(title: "Vehicles, garage, expenses", status: "Built", color: OpenDashTheme.green)
                             CapabilityRow(title: "Wallpaper gallery", status: "Built", color: OpenDashTheme.green)
                             CapabilityRow(title: "Media and caller cards", status: "Limited", color: OpenDashTheme.gold)
-                            CapabilityRow(title: "Locked-screen dash streaming", status: "Needs hardware proof", color: OpenDashTheme.red)
+                            CapabilityRow(title: "Locked-screen dash streaming", status: "Experimental", color: OpenDashTheme.gold)
+                            CapabilityRow(title: "Ride Mode background GPS", status: rideModeStatus, color: rideModeColor)
+                            CapabilityRow(title: "Audio keepalive", status: audioKeepAliveStatus, color: audioKeepAliveColor)
                         }
                     }
 
@@ -82,6 +86,48 @@ struct SettingsView: View {
                 credentials = credentialStore.load()
             }
         }
+    }
+
+    private var rideModeStatus: String {
+        if location.isRideModeActive { return "Active" }
+        switch location.authorizationStatus {
+        case .authorizedAlways:
+            return "Ready"
+        case .authorizedWhenInUse:
+            return "Needs Always"
+        case .denied, .restricted:
+            return "Disabled"
+        case .notDetermined:
+            return "Ask on stream"
+        @unknown default:
+            return "Unknown"
+        }
+    }
+
+    private var rideModeColor: Color {
+        if location.isRideModeActive { return OpenDashTheme.green }
+        switch location.authorizationStatus {
+        case .authorizedAlways:
+            return OpenDashTheme.green
+        case .authorizedWhenInUse, .notDetermined:
+            return OpenDashTheme.gold
+        case .denied, .restricted:
+            return OpenDashTheme.red
+        @unknown default:
+            return OpenDashTheme.gold
+        }
+    }
+
+    private var audioKeepAliveStatus: String {
+        if keepAlive.isActive { return "Active" }
+        if keepAlive.lastError != nil { return "Error" }
+        return "Ready"
+    }
+
+    private var audioKeepAliveColor: Color {
+        if keepAlive.isActive { return OpenDashTheme.green }
+        if keepAlive.lastError != nil { return OpenDashTheme.red }
+        return OpenDashTheme.gold
     }
 }
 

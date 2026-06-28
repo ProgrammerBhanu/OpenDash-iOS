@@ -33,10 +33,17 @@
 	</array>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>OpenDash connects to the bike dash on the local Wi-Fi network to stream the selected wallpaper.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>OpenDash uses background location during Ride Mode so dash streaming can continue while the phone is locked.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>OpenDash uses your location to plan routes, show GPS status, and calculate remaining distance.</string>
+	<string>OpenDash uses your location to plan routes, show GPS status, calculate remaining distance, and keep Ride Mode active while streaming to the dash.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>OpenDash lets you choose local images for idle dash wallpapers.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+		<string>location</string>
+	</array>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>

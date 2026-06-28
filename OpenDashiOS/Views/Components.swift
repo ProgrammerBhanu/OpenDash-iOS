@@ -151,6 +151,6 @@ extension View {
 
 extension Double {
     var currencyText: String {
-        formatted(.currency(code: Locale.current.currency?.identifier ?? "USD"))
+        formatted(.currency(code: "INR"))
     }
 }

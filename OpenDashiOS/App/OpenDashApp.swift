@@ -5,6 +5,7 @@ struct OpenDashApp: App {
     @StateObject private var store = OpenDashStore()
     @StateObject private var location = LocationProvider()
     @StateObject private var dashStreamer = BikeDashStreamer()
+    @StateObject private var keepAlive = RideKeepAliveService()
 
     var body: some Scene {
         WindowGroup {
@@ -12,6 +13,7 @@ struct OpenDashApp: App {
                 .environmentObject(store)
                 .environmentObject(location)
                 .environmentObject(dashStreamer)
+                .environmentObject(keepAlive)
                 .task {
                     location.request()
                 }
